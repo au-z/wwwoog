@@ -1,5 +1,5 @@
 <template>
-  <div class="knob">
+  <div class="knob" :class="type">
     <div class="wheel"></div>
     <span v-if="showPct" class="current">{{this.pct}}</span>
     <span class="min">Min</span>
@@ -29,30 +29,35 @@ import ScrollRotate from './ScrollRotate'
 export default {
   name: 'knob',
   props: {
-    ticks: {
-      required: false,
-      default: true,
-    },
-    showPct: {
-      require: false,
-      default: false,
-    },
+    type: {default: ''},
+    initPct: {default: 0.0},
+    ticks: {default: true},
+    showPct: {default: false},
   },
   data: () => ({
     pct: 0,
     scrollHandler: null,
     scrollRotateOptions: {
       rotateMin: 0,
-      rotateMax: 240,
+      rotateMax: 270,
       startAngle: 0,
       tickDegStep: 20,
     },
   }),
   mounted() {
+    // set initial value
+    this.setStartAngle()
     this.scrollHandler = new ScrollRotate(this.$el, this.handleUpdate, this.scrollRotateOptions)
   },
   methods: {
+    setStartAngle() {
+      const startAngle = this.initPct * this.scrollRotateOptions.rotateMax
+      this.scrollRotateOptions.startAngle = startAngle
+    },
     handleUpdate(knobPct) {
+      if(isNaN(knobPct)) {
+        throw new Error(`Error encountered calculating knob position!`)
+      }
       this.pct = knobPct
       this.$emit('twist', this.pct)
     },
@@ -93,10 +98,10 @@ $knob_size = 3.5em
     &::before
       content: ""
       position: absolute
-      bottom: 29%
-      left: 17%
-      width: 7%
-      height: 7%
+      bottom: 27%
+      left: 27%
+      width: 4px
+      height: 4px
       background-color: $light_color
       border-radius: 50%
       box-shadow: 0 0 .4em 0 darken($light_color, 10%)
@@ -148,3 +153,15 @@ $knob_size = 3.5em
   $start_angle = -140
   arc($num_ticks, $tick_deg_step, $start_angle)
 </style>
+
+<style lang="stylus" scoped>
+@require '../../style/mixins.styl'
+
+.knob.small
+  $knob_size = 2.4em
+  circle($knob_size)
+  span.min,
+  span.max
+    font-size: 0.6em
+</style>
+

@@ -4,6 +4,7 @@ import Vue from 'vue'
 import App from './App'
 
 import Knob from './vue/controls/Knob'
+import SvgIcon from './vue/icons/SvgIcon'
 
 import FrequencyTable from './audio/frequencyTable'
 
@@ -39,6 +40,7 @@ Vue.use({
 })
 
 Vue.component('knob', Knob)
+Vue.component('svg-icon', SvgIcon)
 
 new Vue({
   el: '#app',

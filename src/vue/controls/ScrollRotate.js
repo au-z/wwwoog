@@ -1,14 +1,15 @@
 export default (el, updateFn, options) => {
   if(!el) throw new Error(`Cannot find element`)
   if(!updateFn) throw new Error(`Must pass updateFn`)
+  if(isNaN(options.rotateMin) || isNaN(options.rotateMax) || isNaN(options.startAngle)) {
+    throw new Error(`Non-numbers passed!`)
+  }
   options = options || {rotateMin: 0, rotateMax: 360, startAngle: 0, tickDegStep: 20}
   const ticks = Array.from(el.getElementsByClassName('tick'))
   const wheel = el.getElementsByClassName('wheel')[0]
-
   const scrollSpeed = options.scrollSpeed || 10
   const min = options.rotateMin
   const max = options.rotateMax
-
   let angle = options.startAngle
 
   // transform compatibility detection
@@ -28,10 +29,10 @@ export default (el, updateFn, options) => {
     } else {
       angle = (angle - scrollSpeed >= min) ? angle - scrollSpeed : angle
     }
-    return setAngle()
+    return setAngle(angle)
   }
 
-  function setAngle() {
+  function setAngle(angle) {
     // rotate knob
     wheel.style[transform] = `rotate(${angle}deg)`
 
@@ -59,7 +60,6 @@ export default (el, updateFn, options) => {
   el.addEventListener('mousewheel', handler)
   el.addEventListener('DOMMouseScroll', handler)
 
-  return {
-
-  }
+  // set initial angle
+  setAngle(angle)
 }

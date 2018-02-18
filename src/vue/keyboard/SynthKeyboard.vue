@@ -58,8 +58,10 @@ export default {
       })
     },
     handleKeypress(data) {
-      
-      console.log(data)
+      if(!this.$ac.sourceNode) {
+        console.error(`Could not connect to audio api source node! `, data)
+      }
+      this.$ac.sourceNode.frequency.value = data.frequency
     },
   },
 }

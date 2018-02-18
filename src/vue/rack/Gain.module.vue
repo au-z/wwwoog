@@ -1,7 +1,7 @@
 <template>
   <div class="gain-module">
     <div class="interface" :title="displayGain">
-      <knob @twist="setGain"></knob>
+      <knob :initPct="0.25" @twist="setGain"></knob>
     </div>
     <span>{{displayGain}}</span>
   </div>
@@ -23,7 +23,7 @@ export default {
     this.gainNode = this.$ac.createGain()
     this.gainNode.gain.value = this.gain
     this.$watch('gain', (gain) => this.gainNode.gain.value = gain)
-    this.$emit('module-ready', this.gainNode)
+    this.$emit('module-ready', {in: this.gainNode, out: this.gainNode})
   },
   methods: {
     setGain(gain) {
@@ -37,7 +37,7 @@ export default {
 <style lang="stylus" scoped>
 .gain-module
   width: 100px
-  height: 300px
+  height: 200px
   span
     font-size: 2em
     display: flex
