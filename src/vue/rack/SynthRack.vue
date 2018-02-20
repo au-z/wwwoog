@@ -42,6 +42,7 @@ export default {
       if(installables.every((module) => this.modules.includes(module.name))) {
         this.$ac.sourceNode = this.installModules(installables)
         unwatch()
+        this.$emit('rack-ready')
       } else {
         throw new Error('A rack module has not requested installation.')
       }

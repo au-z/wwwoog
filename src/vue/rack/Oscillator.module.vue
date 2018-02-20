@@ -11,50 +11,76 @@
           </li>
         </ul>
       </div>
-      <div class="volume">
-        <knob type="small" :initPct="gain.initPct" @twist="setGain" :ticks="false"></knob>
+      <div class="envelope">
+        <!-- TODO: envelope visualizer here -->
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import Envelope from '../../audio/Envelope'
+import INTERFACE from '../../audio/Interface'
+const Interface = INTERFACE.instance()
+
 export default {
   name: 'oscillator',
-  data: () => ({
+  data: (v) => ({
+    polyphony: 'mono',
     osc: {
       waveforms: ['sine', 'square', 'sawtooth', 'triangle'],
-      type: 'triangle',
-      node: null,
+      type: 'sine',
+      node: v.$ac.createOscillator(),
     },
     gain: {
-      node: null,
-      initPct: 0.5,
+      node: v.$ac.createGain(),
+    },
+    env: null,
+    envParams: {
+      attack: 0.1,
+      decay: 0.1,
+      sustain: 1.0,
+      reverb: 0.1,
+      velocity: 1,
     },
   }),
   created() {
-    this.osc.node = this.$ac.createOscillator()
     this.osc.node.type = this.osc.type
-    this.osc.node.frequency.value = 200
-    this.osc.node.start(this.$ac.currentTime)
-    
-    this.gain.node = this.$ac.createGain()
-    this.gain.node.gain.value = 0.5
-
+    this.osc.node.start(0) // start immediately
+    this.gain.node.gain.setValueAtTime(0.0, this.$acNow())
+    this.env = new Envelope(this.$ac, this.gain.node.gain)
     this.osc.node.connect(this.gain.node)
+
+    // define an interface for the oscillator note
+    Interface.register('keyboard', {
+      [Interface.NOTEON]: this.noteOn,
+      [Interface.NOTEOFF]: this.noteOff
+    })
     this.$emit('module-ready', {in: this.osc.node, out: this.gain.node})
   },
   methods: {
     setGain(gain) {
-      this.gain.node.gain.value = gain
+      this.gain.node.gain.setValueAtTime(gain, this.$acNow())
     },
     setWaveform(type) {
       this.osc.type = type
       this.osc.node.type = this.osc.type
     },
     activeWaveform(key) {
-      console.log(this.osc.node.type)
       return key === this.osc.node.type
+    },
+    // --------------------------------
+    // INTERFACE METHODS
+    // --------------------------------
+    noteOn(freq) {
+      this.osc.node.frequency.cancelScheduledValues(0)
+      this.osc.node.frequency.setValueAtTime(freq, this.$acNow())
+      this.env.envGenOn(this.envParams.attack, this.envParams.decay, this.envParams.sustain)
+    },
+    noteOff(freq) {
+      this.osc.node.frequency.cancelScheduledValues(0)
+      this.osc.node.frequency.setValueAtTime(freq, this.$acNow())
+      this.env.envGenOff(this.envParams.reverb)
     },
   }
 }
@@ -73,7 +99,7 @@ export default {
   .waveforms
     position: relative
     &:after
-      tipNumber(1)
+      tipNumber(1, #fff)
     ul
       margin: 0
       padding: 0
@@ -81,25 +107,34 @@ export default {
       li
         margin: 0
         padding: 0
-  div.waveform
-    width: 24px
-    height: 24px
-    display: flex
-    justify-content: center
-    align-items: center
-    border-radius: 5px
-    color: #f44
-    cursor: pointer
-    gradient(0deg, darken(#fcfcfc, 2%), #fcfcfc, lighten(#fcfcfc, 4%))
-    transition: 500ms all
-  span
-    font-size: 2em
-    display: flex
-    justify-content: center
+    div.waveform
+      width: 24px
+      height: 24px
+      display: flex
+      justify-content: center
+      align-items: center
+      border-radius: 5px
+      color: #f44
+      cursor: pointer
+      transition: 500ms all
+    span
+      font-size: 2em
+      display: flex
+      justify-content: center
+  .envelope
+    position relative
+    width: calc(100% - 48px)
+    height: 92px
+    background: #333
+    gradient(-30deg, #333, #444)
+    border-radius: 4px
+    &:before
+      outline(-4px, 2px solid #ddd)
   .interface
     position relative
     padding: 16px
     display: flex
+    justify-content: space-between
 </style>
 
 <style lang="stylus">
@@ -114,13 +149,13 @@ export default {
 .oscillator .waveform
   svg path
     stroke: #bbb
-    stroke-width: 10
+    stroke-width: 8
   &.active svg path
     stroke: #f44
     stroke-width: 14
 .oscillator .waveform.sine
   svg path
-    stroke-width: 20
+    stroke-width: 16
   &.active svg path
     stroke-width: 28
 </style>

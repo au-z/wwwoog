@@ -2,7 +2,7 @@
   <div class="synth" :style="`width: ${dims.W}px; height: ${dims.H}px`">
     <synth-debug></synth-debug>
     <synth-rack :modules="modules" :key="moduleKey"></synth-rack>
-    <synth-keyboard></synth-keyboard>
+    <synth-keyboard :rackInterface="rackInterface"></synth-keyboard>
   </div>
 </template>
 
@@ -10,14 +10,16 @@
 import SynthRack from './vue/rack/SynthRack'
 import SynthKeyboard from './vue/keyboard/SynthKeyboard'
 import SynthDebug from './vue/SynthDebug'
+import Interface from './audio/Interface'
 
 export default {
   name: 'synth',
   components: {SynthRack, SynthKeyboard, SynthDebug},
   data: () => ({
+    rackInterface: null,
     modules: [
       'OscillatorModule',
-      'EnvelopeModule',
+      // 'EnvelopeModule',
       'GainModule',
     ],
     dims: {W: 800, H: 400},
@@ -27,11 +29,6 @@ export default {
       return JSON.stringify(this.modules)
     },
   },
-  methods: {
-    connectRack(rackInput) {
-      console.log(rackInput)
-    }
-  }
 }
 </script>
 

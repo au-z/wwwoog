@@ -6,19 +6,17 @@ import App from './App'
 import Knob from './vue/controls/Knob'
 import SvgIcon from './vue/icons/SvgIcon'
 
-import FrequencyTable from './audio/frequencyTable'
-
-// tune to A 440
-FrequencyTable.instance(440)
+// tune to A440
+import FREQUENCY_TABLE from './audio/FrequencyTable'
+const FrequencyTable = FREQUENCY_TABLE.instance(440)
 
 if(!window.AudioContext && !window.webkitAudioContext) {
   throw new Error(':( AudioContext support required!')
 }
 const AudioContext = window.AudioContext || window.webkitAudioContext
-
+const ac = new AudioContext()
 
 /* eslint-disable require-jsdoc */
-/* eslint-disable no-invalid-this */
 Vue.use({
   name: 'vue-inject',
   version: '1.0.0',
@@ -33,9 +31,10 @@ Vue.use({
   },
 }, {
   injectables: [
-    {key: '$ac', val: new AudioContext()},
+    {key: '$ac', val: ac},
+    {key: '$acNow', val: () => ac.currentTime},
     {key: '$fetch', val: (url, options) => fetch(url, options).then((r) => r.json())},
-    {key: '$ft', val: FrequencyTable.instance()},
+    {key: '$ft', val: FrequencyTable},
   ],
 })
 

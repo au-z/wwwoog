@@ -7,13 +7,17 @@
         black: blackKey(k),
         dims: dimsProp(k, i),
       }"
-      @keypress="handleKeypress"
+      @keydown="keydown"
+      @keyup="keyup"
     ></keyboard-key>
   </div>
 </template>
 
 <script>
-import KeyboardKey from './KeyboardKey';
+import Vue from 'vue'
+import KeyboardKey from './KeyboardKey'
+import INTERFACE from '../../audio/Interface'
+const Interface = INTERFACE.instance()
 
 const keys = [
   'A3', 'As3', 'B3', 'C4', 'Cs4', 'D4', 'Ds4', 'E4', 'F4', 'Fs4', 'G4', 'Gs4',
@@ -32,6 +36,7 @@ export default {
         white: {W: 50, H: '100%'},
         black: {W: 30, H: '70%'},
       },
+      activeKeys: {},
     }
   },
   created() {
@@ -57,11 +62,17 @@ export default {
         return x
       })
     },
-    handleKeypress(data) {
-      if(!this.$ac.sourceNode) {
-        console.error(`Could not connect to audio api source node! `, data)
-      }
-      this.$ac.sourceNode.frequency.value = data.frequency
+    keydown(data) {
+      Interface.fn.keyboard.NOTEON(data.frequency)
+      this.activeKeys[data.name] = data.frequency
+      // monophonic synthesizer set pitch
+    },
+    keyup(data) {
+      // turn off all notes on keyup
+      Object.keys(this.activeKeys).forEach((k) => {
+        Interface.fn.keyboard.NOTEOFF(this.activeKeys[k])
+      })
+      this.activeKeys = {}
     },
   },
 }

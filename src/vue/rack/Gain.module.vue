@@ -21,14 +21,14 @@ export default {
   },
   created() {
     this.gainNode = this.$ac.createGain()
-    this.gainNode.gain.value = this.gain
-    this.$watch('gain', (gain) => this.gainNode.gain.value = gain)
+    this.gainNode.gain.setValueAtTime(this.gain, this.$acNow())
+    this.$watch('gain', (gain) => this.gainNode.gain.setValueAtTime(gain, this.$acNow()))
     this.$emit('module-ready', {in: this.gainNode, out: this.gainNode})
   },
   methods: {
     setGain(gain) {
       this.gain = gain
-      this.gainNode.gain.value = gain
+      this.gainNode.gain.setValueAtTime(gain, this.$acNow())
     },
   },
 }

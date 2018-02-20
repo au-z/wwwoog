@@ -5,7 +5,6 @@
       keyData.name,
       {black: keyData.black},
     ]"
-    @click="() => $emit('keypress', {name: keyData.name, frequency})"
   ></div>
 </template>
 
@@ -20,6 +19,14 @@ export default {
   },
   mounted() {
     this.addComputedStyles(this.$el)
+    this.$el.addEventListener('mousedown', (e) => this.$emit('keydown', {
+      name: this.keyData.name,
+      frequency: this.frequency
+    }))
+    this.$el.addEventListener('mouseup', (e) => this.$emit('keyup', {
+      name: this.keyData.name,
+      frequency: this.frequency
+    }))
   },
   methods: {
     addComputedStyles(el) {

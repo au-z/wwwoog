@@ -21,5 +21,6 @@
     "semi": ["error", "never"],
     "no-console": 0,
     "no-trailing-spaces": 0,
+    "no-inline-comments": 0
   }
 }

@@ -10,6 +10,13 @@ circle(n)
   square(n)
   border-radius: n
 
+absoluteStretch(n)
+  position: absolute
+  content: ''
+  left: n
+  right: n
+  top: n
+  bottom: n
 
 //----------------------------------- 
 // ITERATIVE GEOMETRY
@@ -42,15 +49,22 @@ gradient(origin, colors...)
 // DECORATORS
 //----------------------------------- 
 
-tipNumber($n)
+tipNumber($n, $fill)
   content: '' + $n
   position: absolute
   left: -10px
   top: -10px
   circle(14px)
   border: 1px solid #ddd
+  background: $fill
   text-align: center
   line-height: 1em
   font-size: 0.7em
   font-weight: bold
   color: #aaa
+
+outline($px, $border)
+  absoluteStretch($px)
+  border: $border
+  border-radius: 4px
+

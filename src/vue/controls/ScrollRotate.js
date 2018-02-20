@@ -43,9 +43,6 @@ export default (el, updateFn, options) => {
   
     // add glow to 'active' ticks
     const actives = (Math.round(angle / options.tickDegStep) + 1)
-    if(actives.length > 0) {
-      console.log(actives)
-    }
     for (let tick of ticks.slice(0, actives)) {
       tick.classList.add('active')
     }
