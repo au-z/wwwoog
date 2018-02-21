@@ -11,8 +11,7 @@
           </li>
         </ul>
       </div>
-      <div class="envelope">
-        <!-- TODO: envelope visualizer here -->
+      <div class="envelope" id="envelope">
       </div>
     </div>
   </div>
@@ -21,6 +20,7 @@
 <script>
 import Envelope from '../../audio/Envelope'
 import INTERFACE from '../../audio/Interface'
+import DrawEnvelope from '../../canvas/DrawEnvelope'
 const Interface = INTERFACE.instance()
 
 export default {
@@ -37,10 +37,10 @@ export default {
     },
     env: null,
     envParams: {
-      attack: 0.1,
-      decay: 0.1,
-      sustain: 1.0,
-      reverb: 0.1,
+      a: 0.2,
+      d: 0.3,
+      s: 0.4,
+      r: 0.4,
       velocity: 1,
     },
   }),
@@ -51,12 +51,16 @@ export default {
     this.env = new Envelope(this.$ac, this.gain.node.gain)
     this.osc.node.connect(this.gain.node)
 
+
     // define an interface for the oscillator note
     Interface.register('keyboard', {
       [Interface.NOTEON]: this.noteOn,
       [Interface.NOTEOFF]: this.noteOff
     })
     this.$emit('module-ready', {in: this.osc.node, out: this.gain.node})
+  },
+  mounted() {
+    new DrawEnvelope(this.$el, 'envelope', {params: this.envParams})
   },
   methods: {
     setGain(gain) {
@@ -75,12 +79,12 @@ export default {
     noteOn(freq) {
       this.osc.node.frequency.cancelScheduledValues(0)
       this.osc.node.frequency.setValueAtTime(freq, this.$acNow())
-      this.env.envGenOn(this.envParams.attack, this.envParams.decay, this.envParams.sustain)
+      this.env.envGenOn(this.envParams.a, this.envParams.d, this.envParams.s)
     },
     noteOff(freq) {
       this.osc.node.frequency.cancelScheduledValues(0)
       this.osc.node.frequency.setValueAtTime(freq, this.$acNow())
-      this.env.envGenOff(this.envParams.reverb)
+      this.env.envGenOff(this.envParams.r)
     },
   }
 }
