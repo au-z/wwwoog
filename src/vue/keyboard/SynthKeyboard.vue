@@ -7,6 +7,7 @@
         black: blackKey(k),
         dims: dimsProp(k, i),
       }"
+      :keyMap="findKeyMap(k)"
       @keydown="keydown"
       @keyup="keyup"
     ></keyboard-key>
@@ -16,6 +17,7 @@
 <script>
 import Vue from 'vue'
 import KeyboardKey from './KeyboardKey'
+import QuertyMap from './QuertyMap'
 import INTERFACE from '../../audio/Interface'
 const Interface = INTERFACE.instance()
 
@@ -28,21 +30,23 @@ const keys = [
 export default {
   name: 'synth-keyboard',
   components: {KeyboardKey},
-  data() {
-    return {
-      keys,
-      keyX: [],
-      keyDims: {
-        white: {W: 50, H: '100%'},
-        black: {W: 30, H: '70%'},
-      },
-      activeKeys: {},
-    }
-  },
+  data: (v) => ({
+    keys,
+    keyX: [],
+    keyDims: {
+      white: {W: 50, H: '100%'},
+      black: {W: 30, H: '70%'},
+    },
+    activeKeys: {},
+    keyMap: new QuertyMap(keys, v.$ft, v.keydown, v.keyup),
+  }),
   created() {
     this.keyX = this.calcKeysX(this.keys)
   },
   methods: {
+    findKeyMap(name) {
+      return Object.keys(this.keyMap).find((k) => this.keyMap[k].name === name)
+    },
     dimsProp(keyName, index) {
       return {
         x: this.keyX[index],
@@ -63,6 +67,7 @@ export default {
       })
     },
     keydown(data) {
+      if(this.activeKeys[data.name]) return
       Interface.fn.keyboard.NOTEON(data.frequency)
       this.activeKeys[data.name] = data.frequency
       // monophonic synthesizer set pitch

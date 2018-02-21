@@ -5,13 +5,18 @@
       keyData.name,
       {black: keyData.black},
     ]"
-  ></div>
+  >
+    <span v-if="keyMap" class="keymap">{{keyMap.toUpperCase()}}</span>
+  </div>
 </template>
 
 <script>
 export default {
   name: 'key',
-  props: ['keyData'],
+  props: {
+    keyData: {required: true},
+    keyMap: {default: null},
+  },
   computed: {
     frequency() {
       return this.$ft.toHz(this.keyData.name)
@@ -60,5 +65,15 @@ export default {
     height: 110px
     z-index: 1000
     box-shadow: none
+    & > .keymap
+      color: #888
+  & > .keymap
+    position: absolute
+    bottom: 0
+    left: 50%
+    transform: translate(-50%, -50%)
+    color: #aaa
+    pointer-events: none
+    user-select: none
 </style>
 

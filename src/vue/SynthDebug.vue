@@ -2,6 +2,7 @@
   <div class="synth-debug">
     <ul>
       <li v-if="$ac"><wave-icon></wave-icon></li>
+      <li v-if="$appConfig.keyboard"><i class="fa fa-keyboard-o"></i></li>
     </ul>
   </div>
 </template>
@@ -36,6 +37,8 @@ PI = 3.14159265
       justify-content: center 
       align-items center
       font-size 1.5em
-      color: #444
+      color: #f44
       margin: 8px
+      i.fa
+        font-size: 1em
 </style>
