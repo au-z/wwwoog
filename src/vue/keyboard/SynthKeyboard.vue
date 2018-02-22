@@ -12,7 +12,7 @@
       @keyup="keyup"
     ></keyboard-key>
   </div>
-</template>
+</template>a
 
 <script>
 import Vue from 'vue'
@@ -38,14 +38,14 @@ export default {
       black: {W: 30, H: '70%'},
     },
     activeKeys: {},
-    keyMap: new QuertyMap(keys, v.$ft, v.keydown, v.keyup),
+    keyMap: new QuertyMap(keys, 'C4', v.keydown, v.keyup),
   }),
   created() {
     this.keyX = this.calcKeysX(this.keys)
   },
   methods: {
     findKeyMap(name) {
-      return Object.keys(this.keyMap).find((k) => this.keyMap[k].name === name)
+      return Object.keys(this.keyMap).find((k) => this.keyMap[k] === name)
     },
     dimsProp(keyName, index) {
       return {

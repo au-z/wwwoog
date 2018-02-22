@@ -35,7 +35,7 @@ let FrequencyTable = (function() {
   }
 
   return {
-    instance: (tuning) => (!instance) ? init(tuning) : instance,
+    instance: (tuning = 440) => (!instance) ? init(tuning) : instance,
   }
 })()
 

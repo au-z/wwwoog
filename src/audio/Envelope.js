@@ -2,7 +2,7 @@ export default (audioContext, gainParam) => {
   let ac = audioContext
   let gain = gainParam
 
-  const envGenOn = (a, d, s) => {
+  const on = (a, d, s) => {
     const now = ac.currentTime
     gain.cancelScheduledValues(0)
     gain.setValueAtTime(0, now)
@@ -11,7 +11,7 @@ export default (audioContext, gainParam) => {
     gain.setValueAtTime(1, now)
   }
 
-  const envGenOff = (r) => {
+  const off = (r) => {
     const now = ac.currentTime
     gain.cancelScheduledValues(0)
     gain.setValueAtTime(gain.value, now)
@@ -19,7 +19,7 @@ export default (audioContext, gainParam) => {
   }
 
   return {
-    envGenOn,
-    envGenOff,
+    on,
+    off,
   }
 }

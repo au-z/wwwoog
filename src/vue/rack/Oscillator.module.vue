@@ -11,8 +11,7 @@
           </li>
         </ul>
       </div>
-      <div class="envelope" id="envelope">
-      </div>
+      <div class="envelope" id="envelope"></div>
     </div>
   </div>
 </template>
@@ -32,39 +31,38 @@ export default {
       type: 'sine',
       node: v.$ac.createOscillator(),
     },
-    gain: {
+    env: {
+      on: null,
+      off: null,
       node: v.$ac.createGain(),
-    },
-    env: null,
-    envParams: {
-      a: 0.2,
-      d: 0.3,
-      s: 0.4,
-      r: 0.4,
-      velocity: 1,
+      params: {
+        a: 0.2,
+        d: 0.3,
+        s: 0.7,
+        r: 0.2,
+      },
     },
   }),
   created() {
     this.osc.node.type = this.osc.type
     this.osc.node.start(0) // start immediately
-    this.gain.node.gain.setValueAtTime(0.0, this.$acNow())
-    this.env = new Envelope(this.$ac, this.gain.node.gain)
-    this.osc.node.connect(this.gain.node)
-
+    this.env.node.gain.setValueAtTime(0.0, this.$acNow())
+    this.env = {...this.env, ...new Envelope(this.$ac, this.env.node.gain)}
+    this.osc.node.connect(this.env.node)
 
     // define an interface for the oscillator note
     Interface.register('keyboard', {
       [Interface.NOTEON]: this.noteOn,
       [Interface.NOTEOFF]: this.noteOff
     })
-    this.$emit('module-ready', {in: this.osc.node, out: this.gain.node})
+    this.$emit('module-ready', {in: this.osc.node, out: this.env.node})
   },
   mounted() {
-    new DrawEnvelope(this.$el, 'envelope', {params: this.envParams})
+    new DrawEnvelope(this.$el, 'envelope', {params: this.env.params})
   },
   methods: {
     setGain(gain) {
-      this.gain.node.gain.setValueAtTime(gain, this.$acNow())
+      this.env.node.gain.setValueAtTime(gain, this.$acNow())
     },
     setWaveform(type) {
       this.osc.type = type
@@ -73,18 +71,19 @@ export default {
     activeWaveform(key) {
       return key === this.osc.node.type
     },
+
     // --------------------------------
     // INTERFACE METHODS
     // --------------------------------
     noteOn(freq) {
       this.osc.node.frequency.cancelScheduledValues(0)
       this.osc.node.frequency.setValueAtTime(freq, this.$acNow())
-      this.env.envGenOn(this.envParams.a, this.envParams.d, this.envParams.s)
+      this.env.on(this.env.params.a, this.env.params.d, this.env.params.s)
     },
     noteOff(freq) {
       this.osc.node.frequency.cancelScheduledValues(0)
       this.osc.node.frequency.setValueAtTime(freq, this.$acNow())
-      this.env.envGenOff(this.envParams.r)
+      this.env.off(this.env.params.r)
     },
   }
 }

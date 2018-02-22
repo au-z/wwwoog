@@ -1,4 +1,8 @@
 require('font-awesome/css/font-awesome.css')
+// tune to A440
+import AppConfig from './appConfig'
+import FREQUENCY_TABLE from './audio/FrequencyTable'
+const FrequencyTable = FREQUENCY_TABLE.instance(440)
 
 import Vue from 'vue'
 import App from './App'
@@ -6,11 +10,6 @@ import App from './App'
 import Knob from './vue/controls/Knob'
 import SvgIcon from './vue/icons/SvgIcon'
 
-// tune to A440
-import FREQUENCY_TABLE from './audio/FrequencyTable'
-const FrequencyTable = FREQUENCY_TABLE.instance(440)
-
-import AppConfig from './appConfig'
 
 if(!window.AudioContext && !window.webkitAudioContext) {
   throw new Error(':( AudioContext support required!')
