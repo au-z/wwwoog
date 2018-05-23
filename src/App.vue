@@ -19,7 +19,6 @@ export default {
     rackInterface: null,
     modules: [
       'OscillatorModule',
-      // 'EnvelopeModule',
       'GainModule',
     ],
     dims: {W: 800, H: 400},
@@ -33,7 +32,7 @@ export default {
 </script>
 
 <style lang="stylus">
-@require './style/mixins.styl'
+@require './style/app.styl'
 @import url('https://fonts.googleapis.com/css?family=Varela+Round|Open+Sans:300')
 
 *, *:before, *:after

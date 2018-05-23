@@ -1,4 +1,12 @@
 //----------------------------------- 
+// POLYFILLS
+//----------------------------------- 
+transformOrigin(a, b)
+  transform-origin: a b
+  -webkit-transform-origin: a b
+  -ms-transform-origin: a b
+
+//----------------------------------- 
 // GEOMETRY
 //----------------------------------- 
 
@@ -49,13 +57,14 @@ gradient(origin, colors...)
 // DECORATORS
 //----------------------------------- 
 
-tipNumber($n, $fill)
+tipNumber($n, $fill = transparent, $border = true)
   content: '' + $n
   position: absolute
   left: -10px
   top: -10px
   circle(14px)
-  border: 1px solid #ddd
+  if $border
+    border: 1px solid #ddd
   background: $fill
   text-align: center
   line-height: 1em

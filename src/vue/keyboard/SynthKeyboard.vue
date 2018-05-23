@@ -1,18 +1,18 @@
 <template>
   <div class="synth-keyboard">
     <keyboard-key v-for="(k, i) in keys" :key="i"
-      :keyData="{
+      :key-data="{
         name: k,
         index: i,
         black: blackKey(k),
         dims: dimsProp(k, i),
       }"
-      :keyMap="findKeyMap(k)"
+      :key-map="findKeyMap(k)"
       @keydown="keydown"
       @keyup="keyup"
     ></keyboard-key>
   </div>
-</template>a
+</template>
 
 <script>
 import Vue from 'vue'
@@ -30,7 +30,7 @@ const keys = [
 export default {
   name: 'synth-keyboard',
   components: {KeyboardKey},
-  data: (v) => ({
+  data: (vm) => ({
     keys,
     keyX: [],
     keyDims: {
@@ -38,7 +38,7 @@ export default {
       black: {W: 30, H: '70%'},
     },
     activeKeys: {},
-    keyMap: new QuertyMap(keys, 'C4', v.keydown, v.keyup),
+    keyMap: new QuertyMap(keys, 'C4', vm.keydown, vm.keyup),
   }),
   created() {
     this.keyX = this.calcKeysX(this.keys)
@@ -68,9 +68,9 @@ export default {
     },
     keydown(data) {
       if(this.activeKeys[data.name]) return
+      // monophonic synthesizer set pitch
       Interface.fn.keyboard.NOTEON(data.frequency)
       this.activeKeys[data.name] = data.frequency
-      // monophonic synthesizer set pitch
     },
     keyup(data) {
       // turn off all notes on keyup

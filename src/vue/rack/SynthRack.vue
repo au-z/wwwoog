@@ -2,7 +2,7 @@
   <div class="synth-rack">
     <module v-for="(m, i) in modules" :key="m.name"
       :component="m"
-      :moduleIndex="i"
+      :index="i"
       @install-module="registerModuleInstall"
     ></module>
   </div>
@@ -24,16 +24,16 @@ export default {
     },
     installModules(modules) {
       modules.sort((m) => m.index)
-      for(var i = 0; i < modules.length; i++) {
-        if(!modules[i].nodes || (!modules[i].nodes.in && !modules[i].nodes.out)) {
+      modules.forEach((m, i) => {
+        if(!m.nodes || (!m.nodes.in && !m.nodes.out)) {
           throw new Error(`This module does not expose a web audio node: ${modules[i]}`)
         }
         if(i === modules.length - 1) {
-          modules[i].nodes.out.connect(this.$ac.destination)
+          m.nodes.out.connect(this.$ac.destination)
         } else {
-          modules[i].nodes.out.connect(modules[i + 1].nodes.in)
+          m.nodes.out.connect(modules[i + 1].nodes.in)
         }
-      }
+      })
       return modules[0].nodes.in
     },
   },

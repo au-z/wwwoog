@@ -1,5 +1,5 @@
 <template>
-  <div class="gain-module">
+  <div class="gain">
     <div class="interface" :title="displayGain">
       <knob :initPct="0.25" @twist="setGain"></knob>
     </div>
@@ -9,7 +9,7 @@
 
 <script>
 export default {
-  name: 'gain-module',
+  name: 'gain',
   data: () => ({
     gain: 0,
     gainNode: null,
@@ -35,7 +35,7 @@ export default {
 </script>
 
 <style lang="stylus" scoped>
-.gain-module
+.gain
   width: 100px
   height: 200px
   span

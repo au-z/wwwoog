@@ -5,13 +5,23 @@
         <ul>
           <li v-for="w in osc.waveforms" :key="w">
             <div class="waveform"
-              :class="[{active: osc.type == w}, w]"
+              :class="[{active: osc.type === w}, w]"
               @click="setWaveform(w)"
             ><svg-icon :url="`/static/svg/${w}.svg`"></svg-icon></div>
           </li>
         </ul>
       </div>
-      <div class="envelope" id="envelope"></div>
+      <!-- <div class="envelope" id="envelope"></div> -->
+      <div class="envelope">
+        <slider class="pack-col slider-a"
+          v-model="env.params.a" label="Attack"></slider>
+        <slider class="pack-col slider-d"
+          v-model="env.params.d" label="Delay"></slider>
+        <slider class="pack-col slider-s"
+          v-model="env.params.s" label="Sustain"></slider>
+        <slider class="pack-col slider-r"
+          v-model="env.params.r" label="Release" :invert="true"></slider>
+      </div>
     </div>
   </div>
 </template>
@@ -58,7 +68,7 @@ export default {
     this.$emit('module-ready', {in: this.osc.node, out: this.env.node})
   },
   mounted() {
-    new DrawEnvelope(this.$el, 'envelope', {params: this.env.params})
+    // new DrawEnvelope(this.$el, 'envelope', {params: this.env.params})
   },
   methods: {
     setGain(gain) {
@@ -91,6 +101,13 @@ export default {
 
 <style lang="stylus" scoped>
 @require '../../style/mixins.styl'
+
+envelopeTip(label)
+  tipNumber(label, transparent, false)
+  transform: rotate(90deg)
+  left: 250%
+  top: 30%
+  font-size: 0.6em
 
 .oscillator
   width: 200px
@@ -128,11 +145,28 @@ export default {
     position relative
     width: calc(100% - 48px)
     height: 92px
-    background: #333
-    gradient(-30deg, #333, #444)
+    display: flex
+    justify-content: space-between
+    align-items: center
+    // background: #333
+    // gradient(-30deg, #333, #444)
     border-radius: 4px
     &:before
       outline(-4px, 2px solid #ddd)
+    &:after
+      tipNumber(2, #fff)
+    div.pack-col
+      transform-origin: 100% 120%
+      transform: rotate(-90deg)
+      &.slider-a:after
+        envelopeTip('A')
+      &.slider-d:after
+        envelopeTip('D')
+      &.slider-s:after
+        envelopeTip('S')
+      &.slider-r:after
+        envelopeTip('R')
+      
   .interface
     position relative
     padding: 16px

@@ -1,7 +1,6 @@
 import FREQUENCY_TABLE from '../../audio/FrequencyTable'
-const FrequencyTable = FREQUENCY_TABLE.instance(440)
+const Ft = FREQUENCY_TABLE.instance(440)
 
-/* eslint-disable no-multi-spaces */
 /**
  * Generates a Querty keyboard mapping for your synthesizer
  * @param {Array} keys the keynames to map
@@ -14,23 +13,24 @@ export default function(keys, startKey, keydownFn, keyupFn) {
   startKey = startKey || 'C4'
   if(!keys.includes(startKey)) startKey = keys[0]
   
-  const mappedValues = ['a', 'w', 's', 'e', 'd', 'f', 't', 'g', 'y', 'h', 'u', 'j', 'k', 'o', 'l', 'p', ';', '\'']
+  const mappedKeys = ['A', 'W', 'S', 'E', 'D', 'F', 'T', 'G', 'Y', 'H', 'U', 'J', 'K', 'O', 'L', 'P', ';', '\'']
   
   const startKeyIdx = keys.findIndex((k) => k === startKey) || 0
-  const keysToMap = keys.slice(startKeyIdx, mappedValues.length + startKeyIdx)
+  const keysToMap = keys.slice(startKeyIdx, mappedKeys.length + startKeyIdx)
+
   const keyMap = {}
-  keysToMap.forEach((k, i) => keyMap[mappedValues[i]] = k)
+  keysToMap.forEach((k, i) => keyMap[mappedKeys[i]] = k)
 
   document.addEventListener('keydown', (event) => {
-    const key = keyMap[event.key.toLowerCase()]
+    const key = keyMap[event.key.toUpperCase()]
     if(!key) return
-    keydownFn({name: key, frequency: FrequencyTable.toHz(key)})
+    keydownFn({name: key, frequency: Ft.toHz(key)})
   }, false)
 
   document.addEventListener('keyup', (event) => {
-    const key = keyMap[event.key.toLowerCase()]
+    const key = keyMap[event.key.toUpperCase()]
     if(!key) return
-    keyupFn({name: key, frequency: FrequencyTable.toHz(key)})
+    keyupFn({name: key, frequency: Ft.toHz(key)})
   }, false)
 
   return keyMap
